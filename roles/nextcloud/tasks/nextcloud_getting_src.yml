@@ -1,0 +1,16 @@
+---
+
+- name: Getting NextCloud server package
+  get_url: url=https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.tar.bz2 dest=/tmp/nextcloud-{{ nextcloud_version }}.tar.bz2 mode=0777
+  register: result
+  ignore_errors: false
+
+- name: Extract files
+  unarchive:
+    remote_src: yes
+    src: /tmp/nextcloud-{{ nextcloud_version }}.tar.bz2
+    dest: /tmp/
+
+- name: Installing NextCloud
+  command: mv /tmp/nextcloud /var/www/html/
+

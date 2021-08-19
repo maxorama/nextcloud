@@ -1,0 +1,54 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: Cleanup Cloud-init
+  hosts: all
+  remote_user: root
+  tags: cleanup
+  gather_facts: no
+
+  roles:
+    - cleanup
+    - reboot
+
+- name: Deploy common configuration
+  hosts: all
+  remote_user: root
+  tags: common
+  gather_facts: yes
+
+  tasks:
+    - include_role: name=firewalld
+    - include_role: name=ntp
+    - include_role: name=db
+    - include_role: name=minimal
+    - include_role: name=reboot
+
+- name: Installing NextCloud
+  hosts: all
+  remote_user: root
+  tags: nc_setup
+  gather_facts: yes
+
+  tasks:
+    - include_role: name=nextcloud
+
+- name: Deploy Lets-Encrypt certificate
+  hosts: all
+  remote_user: root
+  tags: cert
+
+  roles:
+    - lets-encrypt
+
+- name: Post configuration
+  hosts: all
+  remote_user: root
+  tags: post_setup
+  gather_facts: no
+
+  roles:
+    - remove_tmp
+    - post_setup
+    - reboot
+

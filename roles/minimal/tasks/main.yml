@@ -1,0 +1,56 @@
+---
+
+- name: Setting hostname
+  hostname: name={{ hostname }}
+
+# Download and install EPEL for Centos/RHEL version 7
+- name: Download EPEL Repo - Centos/RHEL 7
+  dnf: name=epel-release state=present
+  when: ansible_facts['distribution'] == 'CentOS' and ansible_facts['distribution_major_version'] == '7'
+
+- name: Download EPEL Repo - RedHat Linux 8
+  dnf: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm state=present disable_gpg_check=true
+  when: ansible_facts['distribution'] == 'OracleLinux' and ansible_facts['distribution_major_version'] == '8'
+
+- name: Download EPEL Repo - Oracle Linux 8
+  dnf: name=oracle-epel-release-el8 state=present
+  when: ansible_facts['distribution'] == 'OracleLinux' and ansible_facts['distribution_major_version'] == '8'
+
+- name: Check if remi-release is installed
+  command: rpm -q remi-release
+  register: rpm_check
+  ignore_errors: true
+
+- name: Installing Remi Repo - Centos/RHEL 7
+  dnf: 
+    name: http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+    state: present
+    disable_gpg_check: true
+  when: rpm_check.rc == 1 and ansible_facts['distribution'] == 'CentOS' and ansible_facts['distribution_major_version'] == '7'
+  ignore_errors: false
+
+- name: Installing Remi Repo - Centos/RHEL 8
+  dnf:
+    name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+    state: present
+    disable_gpg_check: true
+  when: rpm_check.rc == 1 and ansible_facts['distribution'] == 'OracleLinux' and ansible_facts['distribution_major_version'] == '8'
+  ignore_errors: false
+
+- name: yum | disable remi-modular repository
+  shell: yum-config-manager --disable remi-modular
+  when: ansible_facts['distribution'] == 'OracleLinux' and ansible_facts['distribution_major_version'] == '8'
+
+- name: Upgrade all packages
+  dnf: name=* state=latest
+
+- name: Installing minimal soft
+  dnf:
+    name: ['bash-completion', 'mc', 'vim', 'net-tools', 'bzip2', 'zip', 'p7zip', 'p7zip-plugins', 'unzip', 'wget', 'tar', 'mlocate']
+    state: present
+  register: result
+  ignore_errors: False
+
+- include: install_httpd.yml
+- include: install_php.yml
+

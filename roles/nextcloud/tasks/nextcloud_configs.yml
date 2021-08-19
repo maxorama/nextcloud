@@ -1,0 +1,45 @@
+---
+
+- name: Configure NextCloud config
+  template: src=config_{{ nextcloud_profile }}.php.j2 dest=/var/www/html/nextcloud/config/config.php
+
+- name: Copying NextCloud configuration file
+  copy: src=nextcloud.conf dest=/etc/httpd/conf.d/nextcloud.conf mode="0777" force=yes
+  register: result
+  ignore_errors: false
+
+- name: Changing ownership of NextCloud
+  file:
+    path: /var/www/html/nextcloud
+    state: directory
+    recurse: yes
+    owner: apache
+    group: apache
+
+- name: Creating NextCloud data directory
+  file:
+    path: /var/www/html/nextcloud/data
+    state: directory
+    owner: apache
+    group: apache
+
+- name: Creating NextCloud data file
+  file:
+    path: /var/www/html/nextcloud/data/.ocdata
+    state: touch
+    owner: apache
+    group: apache
+
+- name: Copying .htacccess data file
+  copy: src=htaccess dest=/var/www/html/nextcloud/data/.htaccess mode="0655" force=yes
+  register: result
+  ignore_errors: false
+
+- name: Fixing permission of .htacccess data file
+  file:
+    path: /var/www/html/nextcloud/data/.htaccess
+    owner: apache
+    group: apache
+  register: result
+  ignore_errors: false
+

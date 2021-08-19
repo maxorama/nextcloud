@@ -1,0 +1,41 @@
+---
+
+- name: Removing old package Sendmail
+  yum: name=sendmail state=absent
+
+- name: Coping Host file
+  template: src=hosts.j2 dest=/etc/hosts force=yes
+
+- name: Removing vagrant user...
+  user:
+   name: vagrant
+   state: absent
+
+- name: Removing vagrant group...
+  user:
+   name: vagrant
+   state: absent
+
+- name: Removing vagrant directory...
+  file:
+   path: /home/vagrant/
+   state: absent
+
+- name: Removing vagrant directory...
+  file:
+   path: /vagrant/
+   state: absent
+
+- name: Update certificate CA
+  command: /usr/bin/update-ca-trust
+  ignore_errors: false
+  when: ansible_facts['distribution'] == 'OracleLinux' and ansible_facts['distribution_major_version'] == '8'
+
+- name: display post install message
+  debug:
+    msg: |
+      Things left to do:
+        - To working properly you do need install
+        - self-signed/CA certificate into OS
+        - After that you should run command 'update-ca-trust'
+        - to update root certificate

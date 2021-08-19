@@ -1,0 +1,40 @@
+---
+# Download and install EPEL for Centos/RHEL version 7
+
+- name: Install NTP Chrony server
+  dnf: name=chrony state=present
+  tags: chrony
+
+- name: Setting RTC in localtime zone
+  command: timedatectl set-local-rtc 1
+  ignore_errors: false
+
+- name: Remove ETC time
+  file:
+    path: /etc/localtime
+    state: absent
+
+- name: Creating symlinks for Europe/Moscow time
+  file:
+    src: /usr/share/zoneinfo/Europe/Moscow
+    dest: /etc/localtime
+    state: link
+
+- name: Configure ntp file
+  template: src=chrony.conf.j2 dest=/etc/chrony.conf
+  tags: chrony
+  notify: restart chrony
+
+- name: Opening NTP firewall port
+  firewalld:
+   service: ntp
+   zone: public
+   permanent: true
+   state: enabled
+   immediate: yes
+  ignore_errors: true
+
+- name: Start the chrony service
+  service: name=chronyd state=started enabled=yes
+  tags: chrony
+

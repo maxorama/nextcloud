@@ -1,0 +1,26 @@
+---
+
+- name: Ansible delete file glob
+  find:
+    paths: /tmp/
+    patterns: 'vagrant*,nextcloud*'
+    recurse: True
+  register: files_to_delete
+
+- name: Ansible delete directory glob
+  find:
+    paths: /tmp/
+    patterns: 'nextcloud*'
+    recurse: True
+    file_type: directory
+  register: tmp_directory_to_delete
+
+#- debug: msg={{ files_to_delete.files }}
+#- debug: msg={{ directory_to_delete.files }}
+
+- name: Ansible remove file glob
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ files_to_delete.files + tmp_directory_to_delete.files }}"
+

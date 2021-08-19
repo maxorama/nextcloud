@@ -1,0 +1,24 @@
+---
+
+- name: Installing PHP
+  dnf: 
+    name: ['redis', 'libmemcached', 'memcached', 'php', 'php-fpm','php-gd', 'php-common', 'php-cli', 'php-json', 'php-mbstring', 'php-pdo', 'php-xml', 'php-pecl-zip', 'php-pear', 'php-ldap', 'php-pecl-apcu', 'php-opcache', 'php-mysqlnd' ]
+    state: present
+    enablerepo: remi-php73
+  ignore_errors: false
+  when: ansible_facts['distribution'] == 'CentOS' and ansible_facts['distribution_major_version'] == '7'
+
+- name: Installing PHP
+  dnf:
+    name: ['redis', 'libmemcached', 'memcached', 'php74-php', 'php74-php-fpm','php74-php-gd', 'php74-php-common', 'php74-php-cli', 'php74-php-json', 'php74-php-mbstring', 'php74-php-pdo', 'php74-php-xml', 'php74-php-pecl-zip', 'php74-php-pear', 'php74-php-ldap', 'php74-php-pecl-apcu', 'php74-php-opcache', 'php74-php-mysqlnd', 'php74-php-intl', 'php74-php-bcmath', 'php74-php-gmp', 'php74-php-pecl-imagick', 'php74-php-pecl-memcache', 'php74-php-phpiredis', 'php74-libzip' ]
+    state: present
+    enablerepo: remi
+  ignore_errors: false
+  when: ansible_facts['distribution'] == 'OracleLinux' and ansible_facts['distribution_major_version'] == '8'
+
+- name: Enable service Memcached
+  service: name=memcached state=started enabled=yes
+
+- name: Enable service Redis
+  service: name=redis state=started enabled=yes
+

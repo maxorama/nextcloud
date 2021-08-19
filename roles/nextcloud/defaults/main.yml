@@ -1,0 +1,17 @@
+---
+
+### Using profile: ldap, mysql, plain
+nextcloud_profile: ldap
+
+nextcloud_version: 22.1.0
+nextcloud_db: nextcloud
+nextcloud_user: nc_user
+nextcloud_pass: P@ssw0rd
+
+nextcloud_mail_host: <<mail_server>>
+nextcloud_mail_port: 25
+nextcloud_mail_secure: none
+nextcloud_mail_auth: 1 
+nextcloud_smtp_user: <<admin_user>>
+nextcloud_smtp_pass: <<admin_pass>>
+

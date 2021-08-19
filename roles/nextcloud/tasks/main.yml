@@ -1,0 +1,19 @@
+---
+
+- include: nextcloud_create_db.yml
+- include: nextcloud_getting_src.yml
+- include: nextcloud_configs.yml
+- include: nextcloud_regexp.yml
+
+- name: display post install message
+  debug:
+    msg: |
+      Things left to do:
+        - To working properly you do need run 'install'
+        - in the web browser 'https://<nextcloud>/nextcloud/'
+
+- name: Removing CAN_INSTALL file
+  file:
+    path: /var/www/html/nextcloud/config/CAN_INSTALL
+    state: absent
+

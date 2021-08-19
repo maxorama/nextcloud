@@ -1,0 +1,21 @@
+---
+
+- name: Creating NextCloud Application Database
+  mysql_db: name={{ nextcloud_db }} state=present
+  ignore_errors: true
+
+- name: Creating NextCloud Application DB User...
+  mysql_user: name={{ nextcloud_user }} password={{ nextcloud_pass }} priv='{{ nextcloud_db }}.*:ALL,GRANT' host='localhost' state=present
+  no_log: true
+  ignore_errors: true
+
+- name: Copying NextCloud mysql tables
+  copy: src=loaddb.sql dest=/tmp/loaddb.sql force=yes
+  ignore_errors: false
+
+- name: Import NextCloud Database
+  mysql_db:
+    name: "{{ nextcloud_db }}"
+    state: import
+    target: /tmp/loaddb.sql
+

@@ -1,0 +1,7 @@
+---
+
+mysqlservice: mysqld
+mysql_port: 3306
+mysql_db_user: root
+mysql_db_pass: P@ssw0rd
+

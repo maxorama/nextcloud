@@ -1,0 +1,71 @@
+---
+
+- name: Find php.ini
+  find:
+    paths: /etc
+    patterns: 'php.ini'
+    recurse: True
+  register: php_file
+
+- name: Adding PATH to Mailwatch config
+  lineinfile:
+    dest: "{{ php_file.files.0.path }}"
+    line: "apc.enable_cli = 1"
+    state: present
+    insertafter: "engine = On"
+
+- name: Regexp php.ini config for NextCloud
+  replace:
+    path: "{{ php_file.files.0.path }}"
+    regexp: '^(memory_limit =)(\s.*)?'
+    replace: '\1 1G'
+
+- name: Regexp php.ini config for NextCloud
+  replace:
+    path: "{{ php_file.files.0.path }}"
+    regexp: '^(upload_max_filesize =)(\s.*)?'
+    replace: '\1 16000M'
+
+- name: Regexp php.ini config for NextCloud
+  replace:
+    path: "{{ php_file.files.0.path }}"
+    regexp: '^(max_file_uploads =)(\s.*)?'
+    replace: '\1 1000'
+
+- name: Find 10-opcache.ini
+  find:
+    paths: /etc
+    patterns: '10-opcache.ini'
+    recurse: True
+  register: php_opcache_file
+
+- name: Regexp 10-opcache.ini config for NextCloud
+  replace:
+    path: "{{ php_opcache_file.files.0.path }}"
+    regexp: '^;(opcache.interned_strings_buffer.*)'
+    replace: '\1'
+
+- name: Regexp 10-opcache.ini config for NextCloud
+  replace:
+    path: "{{ php_opcache_file.files.0.path }}"
+    regexp: '^;(opcache.max_accelerated_files.*)'
+    replace: '\1'
+
+- name: Regexp 10-opcache.ini config for NextCloud
+  replace:
+    path: "{{ php_opcache_file.files.0.path }}"
+    regexp: '^;(opcache.memory_consumption.*)'
+    replace: '\1'
+
+- name: Regexp 10-opcache.ini config for NextCloud
+  replace:
+    path: "{{ php_opcache_file.files.0.path }}"
+    regexp: '^;(opcache.save_comments.*)'
+    replace: '\1'
+
+- name: Regexp 10-opcache.ini config for NextCloud
+  replace:
+    path: "{{ php_opcache_file.files.0.path }}"
+    regexp: '^;(opcache.revalidate_freq.*)'
+    replace: '\1'
+
