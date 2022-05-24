@@ -3,7 +3,7 @@
 ### Using profile: ldap, mysql, plain
 nextcloud_profile: ldap
 
-nextcloud_version: 22.1.0
+nextcloud_version: 24.0.1
 nextcloud_db: nextcloud
 nextcloud_user: nc_user
 nextcloud_pass: P@ssw0rd
